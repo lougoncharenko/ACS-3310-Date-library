@@ -20,6 +20,10 @@ class CustomDate {
     // getter starts with get
     return this._date.toLocaleDateString("en", { year: "2-digit" });
   }
+  
+  get formatMonth() {
+    return this._date.getMonth()+1
+  }
 
   get month() {
     // getter starts with get
@@ -55,22 +59,51 @@ class CustomDate {
     return this._date.getSeconds();
   }
 
-  format(mask = 'Y-M-D H:I:S') {
-    mask = mask.replace('Y', this.year);
-    mask = mask.replace('y', this.yr);
-    mask = mask.replace('M', this.month);
-    mask = mask.replace('m', this.mon);
-    mask = mask.replace('D', this.addNumberPadding(this.date));
-    mask = mask.replace('d', this.addNumberPadding(this.date));
-    mask = mask.replace('#', this.getDateWithOrdinalSuffix(this.date));
-    mask = mask.replace('H', this.addNumberPadding(this.hour));
-    mask = mask.replace('h', this.hour);
-    mask = mask.replace('I', this.addNumberPadding(this.min));
-    mask = mask.replace('i', this.min);
-    mask = mask.replace('S', this.addNumberPadding(this.secs));
-    mask = mask.replace('s', this.secs);
+  format(mask = 'M D Y') {
+    let formattedDate = '';
+    let buffer = '';
 
-    return mask;
+    for (let i = 0; i < mask.length; i++) {
+      const char = mask[i];
+
+      if (char === 'Y') {
+        buffer += this.year;
+      } else if (char === 'y') {
+        buffer += this.yr;
+      } else if (char === 'M') {
+        buffer += this.month;
+      } else if (char === 'm') {
+        buffer += this.mon
+      } else if (char === 'D') {
+        buffer += this.addNumberPadding(this.date);
+      } else if (char === 'd') {
+        buffer += this.date;
+      } else if (char === '#') {
+        buffer += this.getDateWithOrdinalSuffix(this.date);
+      } else if (char === 'H') {
+        buffer += this.addNumberPadding(this.hour);
+      } else if (char === 'h') {
+        buffer += this.hour;
+      } else if (char === 'I') {
+        buffer += this.addNumberPadding(this.min);
+      } else if (char === 'i') {
+        buffer += this.min;
+      } else if (char === 'S') {
+        buffer += this.addNumberPadding(this.secs);
+      } else if (char === 's') {
+        buffer += this.secs;
+      } else {
+        buffer += char;
+      }
+
+      // Check the next character, if it's not the same format character, add the buffer to the formatted date
+      if (mask[i + 1] !== char) {
+        formattedDate += buffer;
+        buffer = '';
+      }
+    }
+
+    return formattedDate;
   }
 
 
@@ -132,7 +165,6 @@ class CustomDate {
     const daysOfWeekShort = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
     return short ? daysOfWeekShort[day] : daysOfWeekFull[day];
   }
-
 }
 
 // const a = new CustomDate(); // no parameters
@@ -142,10 +174,5 @@ class CustomDate {
 // const e = new CustomDate("9/26/1965");
 
 const customDate = new CustomDate(2023, 8, 2, 15, 30, 45);
-const d = new CustomDate(2017, 0, 2, 3, 4, 5)
-console.log(d.format())              // 2017 January 02
-console.log(d.format('y/m/d'))       // 17/Jan/2
-console.log(d.format('H:I:S'))       // 03:04:05
-console.log(d.format('h:i:s'))       // 3:4:5
-console.log(d.format('Y-M-D h:I:S'))
+
 module.exports.CustomDate = CustomDate;
