@@ -187,6 +187,50 @@ describe("CustomDate", () => {
       const formattedDate = customDate.format("# m Y");
       expect(formattedDate).toBe("1st Jan 1970");
     });
+  });
+  describe("when()", () => {
+    it('should return "Just now" for the current date', () => {
+      const currentDate = new CustomDate();
+      const when = currentDate.when();
+      expect(when).toBe("This date is happening now");
+    });
 
+    it('should return "X days ago" for a date 4 days ago', () => {
+      const fiveMinutesAgo = new CustomDate(2023, 8, 2); // 5 minutes ago
+      const when = fiveMinutesAgo.when();
+      expect(when).toBe("This date occurred 3 days ago");
+    });
+
+    it('should return "Tomorrow" for a date 1 day from now', () => {
+      const tomorrow = new CustomDate(
+        new Date().setDate(new Date().getDate() + 1)
+      ); // 1 day from now
+      const when = tomorrow.when();
+      expect(when).toBe("This date will occur in 1 day");
+    });
+
+    it('should return "Yesterday" for a date 1 day ago', () => {
+      const yesterday = new CustomDate(
+        new Date().setDate(new Date().getDate() - 1)
+      ); // 1 day ago
+      const when = yesterday.when();
+      expect(when).toBe("This date occurred 1 day ago");
+    });
+
+    it('should return "This date will occur in X days" for a future date', () => {
+      // Create a date 5 days from now
+      const futureDate = new CustomDate(
+        new Date().setDate(new Date().getDate() + 5)
+      ); // 5 days from now
+      const when = futureDate.when();
+      expect(when).toBe("This date will occur in 5 days");
+    });
+
+    it('should return "This date occurred X minutes ago" for a date in the past', () => {
+      // Create a date 30 minutes ago
+      const pastDate = new CustomDate(new Date() - 30 * 60 * 1000); // 30 minutes ago
+      const when = pastDate.when();
+      expect(when).toBe("This date occurred 30 minutes ago");
+    });
   });
 });

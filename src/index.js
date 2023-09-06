@@ -20,9 +20,9 @@ class CustomDate {
     // getter starts with get
     return this._date.toLocaleDateString("en", { year: "2-digit" });
   }
-  
+
   get formatMonth() {
-    return this._date.getMonth()+1
+    return this._date.getMonth() + 1;
   }
 
   get month() {
@@ -36,11 +36,11 @@ class CustomDate {
   }
 
   get day() {
-    return this.getDayOfWeek(this._date.getDay())
+    return this.getDayOfWeek(this._date.getDay());
   }
 
   get dy() {
-    return this.getDayOfWeek(this._date.getDay(), true)
+    return this.getDayOfWeek(this._date.getDay(), true);
   }
 
   get date() {
@@ -59,38 +59,38 @@ class CustomDate {
     return this._date.getSeconds();
   }
 
-  format(mask = 'M D Y') {
-    let formattedDate = '';
-    let buffer = '';
+  format(mask = "M D Y") {
+    let formattedDate = "";
+    let buffer = "";
 
     for (let i = 0; i < mask.length; i++) {
       const char = mask[i];
 
-      if (char === 'Y') {
+      if (char === "Y") {
         buffer += this.year;
-      } else if (char === 'y') {
+      } else if (char === "y") {
         buffer += this.yr;
-      } else if (char === 'M') {
+      } else if (char === "M") {
         buffer += this.month;
-      } else if (char === 'm') {
-        buffer += this.mon
-      } else if (char === 'D') {
+      } else if (char === "m") {
+        buffer += this.mon;
+      } else if (char === "D") {
         buffer += this.addNumberPadding(this.date);
-      } else if (char === 'd') {
+      } else if (char === "d") {
         buffer += this.date;
-      } else if (char === '#') {
+      } else if (char === "#") {
         buffer += this.getDateWithOrdinalSuffix(this.date);
-      } else if (char === 'H') {
+      } else if (char === "H") {
         buffer += this.addNumberPadding(this.hour);
-      } else if (char === 'h') {
+      } else if (char === "h") {
         buffer += this.hour;
-      } else if (char === 'I') {
+      } else if (char === "I") {
         buffer += this.addNumberPadding(this.min);
-      } else if (char === 'i') {
+      } else if (char === "i") {
         buffer += this.min;
-      } else if (char === 'S') {
+      } else if (char === "S") {
         buffer += this.addNumberPadding(this.secs);
-      } else if (char === 's') {
+      } else if (char === "s") {
         buffer += this.secs;
       } else {
         buffer += char;
@@ -99,24 +99,81 @@ class CustomDate {
       // Check the next character, if it's not the same format character, add the buffer to the formatted date
       if (mask[i + 1] !== char) {
         formattedDate += buffer;
-        buffer = '';
+        buffer = "";
       }
     }
 
     return formattedDate;
   }
 
+  when() {
+    const currentDate = new CustomDate(); // Current date
+    const dateDifference = this._date - currentDate._date; // Difference in milliseconds
 
-   // helper functions
-   
+    if (dateDifference < 0) {
+      return `This date occurred ${this.timeAgo(currentDate)}`;
+    } else if (dateDifference === 0) {
+      return "This date is happening now";
+    } else {
+      return `This date will occur in ${this.timeFromNow(currentDate)}`;
+    }
+  }
+
+  timeAgo(currentDate) {
+    const timeDifference = currentDate._date - this._date;
+    if (timeDifference < 60000) {
+      return `${Math.floor(timeDifference / 1000)} second${
+        timeDifference / 1000 !== 1 ? "s" : ""
+      } ago`;
+    } else if (timeDifference < 3600000) {
+      return `${Math.floor(timeDifference / 60000)} minute${
+        timeDifference / 60000 !== 1 ? "s" : ""
+      } ago`;
+    } else if (timeDifference < 86400000) {
+      return `${Math.floor(timeDifference / 3600000)} hour${
+        timeDifference / 3600000 !== 1 ? "s" : ""
+      } ago`;
+    } else {
+      return `${Math.floor(timeDifference / 86400000)} day${
+        timeDifference / 86400000 !== 1 ? "s" : ""
+      } ago`;
+    }
+  }
+
+  timeFromNow(currentDate) {
+    const timeDifference = this._date - currentDate._date;
+    if (timeDifference < 60000) {
+      return `${Math.floor(timeDifference / 1000)} second${
+        timeDifference / 1000 !== 1 ? "s" : ""
+      }`;
+    } else if (timeDifference < 3600000) {
+      return `${Math.floor(timeDifference / 60000)} minute${
+        timeDifference / 60000 !== 1 ? "s" : ""
+      }`;
+    } else if (timeDifference < 86400000) {
+      return `${Math.floor(timeDifference / 3600000)} hour${
+        timeDifference / 3600000 !== 1 ? "s" : ""
+      }`;
+    } else {
+      return `${Math.floor(timeDifference / 86400000)} day${
+        timeDifference / 86400000 !== 1 ? "s" : ""
+      }`;
+    }
+  }
+
+  // helper functions
+
   addNumberPadding(number) {
-    return number.toString().padStart(2, '0');
+    return number.toString().padStart(2, "0");
   }
 
   getDateWithOrdinalSuffix(day) {
-    const suffixes = ['st', 'nd', 'rd'];
+    const suffixes = ["st", "nd", "rd"];
     const lastDigit = day % 10;
-    const suffix = (lastDigit >= 1 && lastDigit <= 3 && day !== 11 && day !== 12 && day !== 13) ? suffixes[lastDigit - 1] : 'th';
+    const suffix =
+      lastDigit >= 1 && lastDigit <= 3 && day !== 11 && day !== 12 && day !== 13
+        ? suffixes[lastDigit - 1]
+        : "th";
     return day + suffix;
   }
 
@@ -167,12 +224,7 @@ class CustomDate {
   }
 }
 
-// const a = new CustomDate(); // no parameters
-// const b = new CustomDate("January 1, 1970"); // with a string
-// const c = new CustomDate(2001, 4, 12, 16, 45); // with year, month, date, hours, mins
-// const d = new CustomDate(new Date()); // with another date object
-// const e = new CustomDate("9/26/1965");
-
-const customDate = new CustomDate(2023, 8, 2, 15, 30, 45);
+const customDate = new CustomDate(2023, 8, 5, 15, 30, 0); // Replace with your desired date
+console.log(customDate.when()); // Get the human-readable description
 
 module.exports.CustomDate = CustomDate;
